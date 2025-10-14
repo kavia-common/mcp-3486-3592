@@ -9,6 +9,7 @@ from .routers.messages import router as messages_router
 from .routers.rules import router as rules_router
 from .routers.audit_logs import router as audit_logs_router
 from .routers.jira_sync import router as jira_sync_router
+from ..tasks import startup_background_tasks, shutdown_background_tasks
 
 settings = get_settings()
 configure_logging()
@@ -43,6 +44,18 @@ app.include_router(messages_router)
 app.include_router(rules_router)
 app.include_router(audit_logs_router)
 app.include_router(jira_sync_router)
+
+
+@app.on_event("startup")
+async def _startup_bg() -> None:
+    """Start background scheduler."""
+    await startup_background_tasks()
+
+
+@app.on_event("shutdown")
+async def _shutdown_bg() -> None:
+    """Stop background scheduler."""
+    await shutdown_background_tasks()
 
 
 @app.get("/", tags=["health"], summary="Health Check", description="Simple liveness check for the MCP Server.")
