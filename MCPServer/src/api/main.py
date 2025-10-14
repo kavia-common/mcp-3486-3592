@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from ..core.config import get_settings
 from ..core.logging import configure_logging
+from .routers.auth import router as auth_router
 
 settings = get_settings()
 configure_logging()
@@ -27,6 +28,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Include routers
+app.include_router(auth_router)
+
+
 @app.get("/", tags=["health"], summary="Health Check", description="Simple liveness check for the MCP Server.")
 def health_check():
+    """Health check endpoint."""
     return {"message": "Healthy"}
