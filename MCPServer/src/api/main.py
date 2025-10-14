@@ -6,6 +6,7 @@ from ..core.logging import configure_logging
 from .routers.auth import router as auth_router
 from .routers.users import router as users_router
 from .routers.messages import router as messages_router
+from .routers.rules import router as rules_router
 
 settings = get_settings()
 configure_logging()
@@ -19,6 +20,7 @@ app = FastAPI(
         {"name": "auth", "description": "Authentication endpoints"},
         {"name": "users", "description": "User management (admin-only)"},
         {"name": "messages", "description": "Message processing APIs"},
+        {"name": "rules", "description": "Rule management APIs"},
         {"name": "jira", "description": "JIRA integration APIs"},
     ],
 )
@@ -35,6 +37,7 @@ app.add_middleware(
 app.include_router(auth_router)
 app.include_router(users_router)
 app.include_router(messages_router)
+app.include_router(rules_router)
 
 
 @app.get("/", tags=["health"], summary="Health Check", description="Simple liveness check for the MCP Server.")
