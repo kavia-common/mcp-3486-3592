@@ -1,25 +1,14 @@
 from typing import Generator, Optional
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import Session
 
-from ..core.config import get_settings
 from ..core.security import decode_token
-
-# Create SQLAlchemy engine and session maker at module import.
-# In future, for async support use async engine and async sessions.
-_settings = get_settings()
-_engine = create_engine(_settings.DATABASE_URL, pool_pre_ping=True)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=_engine)
+from ..db.session import get_db as _get_db
 
 # PUBLIC_INTERFACE
 def get_db() -> Generator[Session, None, None]:
     """Yield a SQLAlchemy DB session and ensure it's closed after usage."""
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+    yield from _get_db()
 
 # PUBLIC_INTERFACE
 def get_current_user(optional: bool = False):
