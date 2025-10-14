@@ -5,6 +5,7 @@ from ..core.config import get_settings
 from ..core.logging import configure_logging
 from .routers.auth import router as auth_router
 from .routers.users import router as users_router
+from .routers.messages import router as messages_router
 
 settings = get_settings()
 configure_logging()
@@ -33,6 +34,7 @@ app.add_middleware(
 # Include routers
 app.include_router(auth_router)
 app.include_router(users_router)
+app.include_router(messages_router)
 
 
 @app.get("/", tags=["health"], summary="Health Check", description="Simple liveness check for the MCP Server.")
