@@ -11,6 +11,7 @@ from ..core.logging import configure_logging
 from ..db.session import engine
 from ..db.models import Base  # ensures models metadata is available for create_all
 from ..tasks import startup_background_tasks, shutdown_background_tasks
+from ..db.seed import run_seed_if_enabled
 from ..utils import errors as error_utils
 
 # Routers
@@ -92,6 +93,11 @@ async def _startup() -> None:
         if settings.ENV.lower() == "development":
             logger.info("Development environment detected; creating database tables if missing...")
             Base.metadata.create_all(bind=engine)
+            # Run optional seed in development if enabled via env flag
+            try:
+                run_seed_if_enabled()
+            except Exception as se:  # pragma: no cover - defensive
+                logger.exception("Seeding failed: %s", se)
     except Exception as e:  # pragma: no cover - defensive: log but do not block startup in prod
         logger.exception("Failed to initialize database schema: %s", e)
         # In dev we still proceed to start to allow troubleshooting
