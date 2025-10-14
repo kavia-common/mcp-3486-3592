@@ -39,6 +39,7 @@ class AppSettings(BaseSettings):
     JIRA_EMAIL: Optional[str] = Field(default=None, description="JIRA user/email for API access")
     JIRA_API_TOKEN: Optional[str] = Field(default=None, description="JIRA API token")
     JIRA_PROJECT_KEY: Optional[str] = Field(default=None, description="Default JIRA Project Key")
+    JIRA_WEBHOOK_SECRET: Optional[str] = Field(default=None, description="Shared secret to validate inbound JIRA webhooks")
 
     # Misc
     REQUEST_TIMEOUT_SECONDS: int = Field(default=30, description="Default outbound HTTP request timeout in seconds")
